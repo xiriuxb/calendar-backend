@@ -1,6 +1,5 @@
 import { NextFunction, Request, Response } from "express";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import '../types/express'
 
 const JWTvalidator = (req: Request, res: Response, next: NextFunction) => {
   // x-token en el header
@@ -11,7 +10,10 @@ const JWTvalidator = (req: Request, res: Response, next: NextFunction) => {
   }
 
   try {
-    const payload = jwt.verify(token, process.env.SECRET_JWT_SEED!) as JwtPayload;
+    const payload = jwt.verify(
+      token,
+      process.env.SECRET_JWT_SEED!
+    ) as JwtPayload;
     req.uid = payload.uid;
     req.uname = payload.name;
     next();

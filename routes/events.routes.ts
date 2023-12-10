@@ -1,3 +1,4 @@
+import { check } from "express-validator";
 import {
   getEvents,
   addEvent,
@@ -6,13 +7,26 @@ import {
 } from "../controllers/events.controller";
 import JWTvalidator from "../middlewares/jwtvalidator.middleware";
 import router from "./auth.routes";
+import { fieldValidator } from "../middlewares/validator.middleware";
+import isDate from "../helpers/isDate.validator";
 
-router.get("/", JWTvalidator, getEvents);
+router.use(JWTvalidator);
 
-router.post("/", JWTvalidator, addEvent);
+router.get("/", getEvents);
 
-router.put("/:id", JWTvalidator, updateEvent);
+router.post(
+  "/",
+  [
+    check("title", "El título es obligatorio").not().isEmpty(),
+    check("start", "Fecha de inicio es obligatoria").custom(isDate),
+    check("end", "Fecha de inicio es obligatoria").custom(isDate),
+    fieldValidator,
+  ],
+  addEvent
+);
 
-router.delete("/:id", JWTvalidator, deleteEvent);
+router.put("/:id", updateEvent);
+
+router.delete("/:id", deleteEvent);
 
 export default router;

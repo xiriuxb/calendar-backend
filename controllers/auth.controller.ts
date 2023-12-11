@@ -11,8 +11,9 @@ export const createUser = async (req: Request, res: Response) => {
     const salt = bcrypt.genSaltSync();
     user.password = bcrypt.hashSync(user.password!, salt);
     await user.save();
+    const token = await generateJWT(user.id, body.name!);
 
-    res.status(201).json({ ok: true, uid: user.id, name: body.name });
+    res.status(201).json({ ok: true, uid: user.id, name: body.name, token });
   } catch (error: any) {
     console.log(error);
     if (error.name === "MongoServerError" && error.code === 11000) {
@@ -65,7 +66,7 @@ export const revalidateToken = async (req: Request, res: Response) => {
   try {
     if (req.uid && req.uname) {
       const token = await generateJWT(req.uid, req.uname);
-      res.status(200).json({ ok: true, token: token });
+      res.status(200).json({ ok: true, token: token, uid:req.uid, name: req.uname });
     } else {
       throw new Error("No valid token");
     }

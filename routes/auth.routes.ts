@@ -30,7 +30,7 @@ router.post(
   "/login",
   [
     check("email", "Debe ser un email válido").isEmail().notEmpty(),
-    check("password", "El password ebe tener al menos 6 caracteres").isLength({
+    check("password", "El password debe tener al menos 6 caracteres").isLength({
       min: 6,
     }),
     fieldValidator,
